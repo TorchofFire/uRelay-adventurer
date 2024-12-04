@@ -1,0 +1,40 @@
+.navigation-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100vh;
+  padding: 8px 8px 0;
+  background-color: var(--bg-700);
+  box-sizing: border-box;
+  flex: 0 0 auto;
+}
+
+.fixed-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.server-list {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 16px;
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.server-list::-webkit-scrollbar {
+  display: none;
+}
+
+.server-list .nav-icon:last-child {
+  margin-bottom: 8px;
+}
+
+#nav-break {
+  width: 100%;
+  height: 1px;
+  background-color: var(--text);
+}

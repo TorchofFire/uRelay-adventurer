@@ -1,0 +1,6 @@
+.panel-title {
+  flex: 1;
+  font-weight: 600;
+  color: var(--text);
+  text-align: center;
+}

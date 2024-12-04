@@ -1,0 +1,11 @@
+.sidebar-collapse-icon {
+  background-color: var(--text);
+  mask-image: url('/src/assets/sidebar-collapse.svg');
+  min-width: 24px;
+  width: 24px;
+  height: 24px;
+}
+
+.sidebar-collapse-icon.facing-left {
+  transform: rotate(180deg);
+}

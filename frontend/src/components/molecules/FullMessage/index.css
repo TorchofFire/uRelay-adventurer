@@ -1,0 +1,40 @@
+.full-message {
+  display: flex;
+  gap: 12px;
+}
+
+.message-pfp {
+  min-width: 40px;
+  width: 40px;
+  height: 40px;
+  background-color: var(--text);
+  border-radius: 9999px;
+}
+
+.message-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.message-user-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+}
+
+.message-sender {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.message-date {
+  color: var(--highlight);
+  font-size: 10px;
+}
+
+.message-text {
+  font-weight: 200;
+  color: var(--text);
+}
