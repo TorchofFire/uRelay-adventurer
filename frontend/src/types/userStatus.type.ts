@@ -1,2 +1,1 @@
-
-export type UserStatus = 'online' | 'dnd';
+export type UserStatus = "online" | "dnd";

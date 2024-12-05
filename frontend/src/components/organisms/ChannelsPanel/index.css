@@ -1,50 +1,50 @@
 .channels-panel {
-  width: 250px;
-  align-self: stretch;
-  background-color: var(--bg-500);
-  overflow-y: scroll;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+	width: 250px;
+	align-self: stretch;
+	background-color: var(--bg-500);
+	overflow-y: scroll;
+	-ms-overflow-style: none;
+	scrollbar-width: none;
 }
 
 .channels-panel::-webkit-scrollbar {
-  display: none;
+	display: none;
 }
 
 .panel-header {
-  display: flex;
-  height: 40px;
-  align-items: center;
-  justify-content: center;
-  padding: 0px 4px;
-  box-sizing: border-box;
-  background-color: var(--bg-700);
+	display: flex;
+	height: 40px;
+	align-items: center;
+	justify-content: center;
+	padding: 0px 4px;
+	box-sizing: border-box;
+	background-color: var(--bg-700);
 }
 
 .channel {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border-radius: 8px;
-  overflow: hidden;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	border-radius: 8px;
+	overflow: hidden;
 }
 
 .channels-wrapper {
-  display: inline-flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: 0px 12px;
+	display: inline-flex;
+	flex-direction: column;
+	gap: 16px;
+	padding: 0px 12px;
 }
 
 .channel-name {
-  color: var(--text);
+	color: var(--text);
 }
 
 .hashtag-icon {
-  background-color: var(--text);
-  mask-image: url('/src/assets/hashtag.svg');
-  margin: 0 1px;
-  min-width: 14px;
-  width: 14px;
-  height: 16px;
+	background-color: var(--text);
+	mask-image: url("/src/assets/hashtag.svg");
+	margin: 0 1px;
+	min-width: 14px;
+	width: 14px;
+	height: 16px;
 }

@@ -1,34 +1,33 @@
-
 .guild-category {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: 16px 8px;
-  width: 100%;
-  box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	padding: 16px 8px;
+	width: 100%;
+	box-sizing: border-box;
 }
 
 .category-name {
-  font-weight: 600;
-  color: var(--text);
-  font-size: 14px;
+	font-weight: 600;
+	color: var(--text);
+	font-size: 14px;
 }
 
 .category-label {
-  display: flex;
-  align-items: center;
-  gap: 4px;
+	display: flex;
+	align-items: center;
+	gap: 4px;
 }
 
 .angle-down-icon {
-  background-color: var(--text);
-  mask-image: url('/src/assets/angle-down.svg');
-  margin: 0 1px;
-  min-width: 14px;
-  width: 14px;
-  height: 16px;
+	background-color: var(--text);
+	mask-image: url("/src/assets/angle-down.svg");
+	margin: 0 1px;
+	min-width: 14px;
+	width: 14px;
+	height: 16px;
 }
 
 .angle-down-icon.facing-right {
-  transform: rotate(-90deg);
+	transform: rotate(-90deg);
 }
