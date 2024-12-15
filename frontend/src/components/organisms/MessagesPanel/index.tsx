@@ -21,7 +21,7 @@ const MessagesPanel = () => {
 			</div>
 			<div className="input">
 				<AutoResizingTextarea />
-				<div className="plane-icon" />
+				<div className="message-send" />
 			</div>
 		</div>
 	);

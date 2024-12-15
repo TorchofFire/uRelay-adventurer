@@ -59,11 +59,16 @@
 	align-items: end;
 }
 
-.plane-icon {
+.message-send {
 	min-width: 16px;
 	width: 16px;
 	height: 16px;
-	margin: 12px;
+	padding: 6px;
+	margin: 6px;
 	background-color: var(--text);
 	mask-image: url("/src/assets/paper-plane.svg");
+	mask-size: 60%;
+	mask-repeat: no-repeat;
+	mask-position: center;
+	cursor: pointer;
 }
