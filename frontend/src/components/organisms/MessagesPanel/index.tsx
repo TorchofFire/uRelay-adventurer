@@ -2,8 +2,18 @@ import moment from "moment";
 import AutoResizingTextarea from "../../atoms/AutoResizingTextarea";
 import FullMessage from "../../molecules/FullMessage";
 import "./index.css";
+import React from "react";
 
 const MessagesPanel = () => {
+	const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
+
+	const handleMessagesSend = () => {
+		if (!textareaRef.current) return;
+		console.log(textareaRef.current.value);
+		textareaRef.current.value = "";
+		textareaRef.current.style.height = "auto";
+	};
+
 	return (
 		<div className="messages-panel">
 			<div className="messages-panel-header">
@@ -20,8 +30,11 @@ const MessagesPanel = () => {
 				/>
 			</div>
 			<div className="input">
-				<AutoResizingTextarea />
-				<div className="message-send" />
+				<AutoResizingTextarea
+					ref={textareaRef}
+					onEnterPress={handleMessagesSend}
+				/>
+				<div className="message-send" onClick={handleMessagesSend} />
 			</div>
 		</div>
 	);

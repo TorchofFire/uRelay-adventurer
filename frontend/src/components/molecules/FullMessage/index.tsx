@@ -11,11 +11,11 @@ interface Props {
 
 const FullMessage = (props: Props) => {
 	const date = moment.unix(props.date);
-	let dateFormatted = date.format("MMMM Do, YYYY | hh:mm A");
+	let dateFormatted = date.format("MMMM Do, YYYY | h:mm A");
 	if (moment().isSame(date, "year"))
-		dateFormatted = date.format("MMMM Do | hh:mm A");
+		dateFormatted = date.format("MMMM Do | h:mm A");
 	if (moment().isSame(date, "day"))
-		dateFormatted = `Today at ${date.format("hh:mm A")}`;
+		dateFormatted = `Today at ${date.format("h:mm A")}`;
 
 	return (
 		<div className="full-message">
