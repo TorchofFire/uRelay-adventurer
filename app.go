@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/TorchofFire/uRelay-adventurer/internal/connections"
 	"github.com/TorchofFire/uRelay-adventurer/internal/profile"
@@ -22,5 +23,15 @@ func NewApp() *App {
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 	profile.Init()
-	go connections.NewConnection(false, "localhost:8080")
+	go connections.NewConnection(ctx, false, "localhost:8080")
+}
+
+func (a *App) SendMessage(serverId, message string, channelId int) {
+	server, exists := connections.Servers[serverId]
+	if !exists {
+		fmt.Printf("Connection not found for serverId: %s\n", serverId)
+		return
+	}
+	connections.SendMessage(server.Conn, message, 1, channelId) // TODO: get userId of server
+	// TODO: return error
 }

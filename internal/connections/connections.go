@@ -1,16 +1,16 @@
 package connections
 
 import (
+	"context"
 	"fmt"
 	"log"
 
+	"github.com/TorchofFire/uRelay-adventurer/internal/emitters"
 	"github.com/TorchofFire/uRelay-adventurer/internal/packets"
 	"github.com/gorilla/websocket"
 )
 
-// TODO: rework to connect to multiple guilds at startup
-
-func NewConnection(secure bool, serverAddress string) {
+func NewConnection(ctx context.Context, secure bool, serverAddress string) {
 	protocol := "ws"
 	if secure {
 		protocol = "wss"
@@ -24,7 +24,13 @@ func NewConnection(secure bool, serverAddress string) {
 		// TODO: send error to fontend
 		return
 	}
-	defer conn.Close()
+
+	addNewConnection(serverAddress, conn)
+	defer func() {
+		conn.Close()
+		removeConnection(serverAddress)
+	}()
+
 	fmt.Println("Connected to WebSocket server at", fullWsAddress)
 
 	err = handshake(conn, serverAddress)
@@ -49,11 +55,11 @@ func NewConnection(secure bool, serverAddress string) {
 		}
 		switch p := deserializedPacket.(type) {
 		case packets.GuildMessage:
-			log.Println(p)
+			emitters.EmitGuildMessage(ctx, p)
 		case packets.Handshake:
 			// do nothing
 		case packets.SystemMessage:
-			log.Println(p)
+			emitters.EmitSystemMessage(ctx, p)
 		default:
 			log.Fatal("A deserialized and known packet was not handled")
 		}
