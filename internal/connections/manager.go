@@ -8,13 +8,13 @@ import (
 )
 
 type ChannelData struct {
-	models.GuildChannels
+	Channel  models.GuildChannels
 	Messages []models.GuildMessages `json:"messages"`
 }
 
 type ServerData struct {
 	Conn       *websocket.Conn
-	PersonalID int
+	PersonalID *int
 	Channels   map[int]ChannelData
 	Users      map[int]models.Users
 }

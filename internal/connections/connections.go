@@ -11,11 +11,11 @@ import (
 )
 
 func NewConnection(ctx context.Context, secure bool, serverAddress string) {
-	protocol := "ws"
+	wsProtocol := "ws"
 	if secure {
-		protocol = "wss"
+		wsProtocol = "wss"
 	}
-	fullWsAddress := fmt.Sprintf("%s://%s", protocol, serverAddress)
+	fullWsAddress := fmt.Sprintf("%s://%s", wsProtocol, serverAddress)
 
 	dialer := websocket.DefaultDialer
 	conn, _, err := dialer.Dial(fullWsAddress, nil)
@@ -38,6 +38,9 @@ func NewConnection(ctx context.Context, secure bool, serverAddress string) {
 		log.Println(err)
 		conn.Close()
 	}
+
+	updateUsers(secure, serverAddress)
+	updateChannels(secure, serverAddress)
 
 	for {
 		messageType, packet, err := conn.ReadMessage()

@@ -32,6 +32,6 @@ func (a *App) SendMessage(serverId, message string, channelId int) {
 		fmt.Printf("Connection not found for serverId: %s\n", serverId)
 		return
 	}
-	connections.SendMessage(server.Conn, message, 1, channelId) // TODO: get userId of server
+	connections.SendMessage(server.Conn, message, *connections.Servers[serverId].PersonalID, channelId)
 	// TODO: return error
 }
