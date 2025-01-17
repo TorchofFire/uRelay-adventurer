@@ -26,12 +26,16 @@ func (a *App) startup(ctx context.Context) {
 	go connections.NewConnection(ctx, false, "localhost:8080")
 }
 
-func (a *App) SendMessage(serverId, message string, channelId int) {
+func (a *App) SendMessage(serverId, message string, channelId int) error {
 	server, exists := connections.Servers[serverId]
 	if !exists {
-		fmt.Printf("Connection not found for serverId: %s\n", serverId)
-		return
+		return fmt.Errorf("connection not found for server id: %s", serverId)
 	}
-	connections.SendMessage(server.Conn, message, *connections.Servers[serverId].PersonalID, channelId)
-	// TODO: return error
+
+	err := connections.SendMessage(server.Conn, message, *connections.Servers[serverId].PersonalID, channelId)
+
+	if err != nil {
+		return fmt.Errorf("failed to send message: %v", err)
+	}
+	return nil
 }

@@ -3,13 +3,14 @@ import AutoResizingTextarea from "../../atoms/AutoResizingTextarea";
 import FullMessage from "../../molecules/FullMessage";
 import "./index.css";
 import React from "react";
+import * as backend from "../../../../wailsjs/go/main/App";
 
 const MessagesPanel = () => {
 	const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
 
 	const handleMessagesSend = () => {
 		if (!textareaRef.current) return;
-		console.log(textareaRef.current.value);
+		backend.SendMessage("localhost:8080", textareaRef.current.value, 1);
 		textareaRef.current.value = "";
 		textareaRef.current.style.height = "auto";
 	};
