@@ -1,16 +1,15 @@
+import { Route, Routes } from "react-router-dom";
 import "./App.css";
-import ChannelsPanel from "./components/organisms/ChannelsPanel";
-import MessagesPanel from "./components/organisms/MessagesPanel";
 import NavigationPanel from "./components/organisms/NavigationPanel";
-import UsersPanel from "./components/organisms/UsersPanel";
+import Guild from "./components/pages/Guild";
 
 function App() {
 	return (
 		<>
 			<NavigationPanel />
-			<ChannelsPanel />
-			<MessagesPanel />
-			<UsersPanel />
+			<Routes>
+				<Route path="/guild/:serverAddress/*" element={<Guild />} />
+			</Routes>
 		</>
 	);
 }

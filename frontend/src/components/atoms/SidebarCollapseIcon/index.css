@@ -4,6 +4,8 @@
 	min-width: 24px;
 	width: 24px;
 	height: 24px;
+	transition-duration: 0.2s;
+	transition-timing-function: ease-in-out;
 }
 
 .sidebar-collapse-icon.facing-left {

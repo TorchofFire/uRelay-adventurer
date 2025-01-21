@@ -4,6 +4,7 @@ import "./style.css";
 import App from "./App";
 import { EventsOn } from "../wailsjs/runtime/runtime";
 import { packet } from "./types/packet.namespace";
+import { BrowserRouter } from "react-router-dom";
 
 const container = document.getElementById("root");
 
@@ -18,7 +19,7 @@ EventsOn("system_message", (data: packet.SystemMessage) => {
 });
 
 root.render(
-	<React.StrictMode>
+	<BrowserRouter>
 		<App />
-	</React.StrictMode>
+	</BrowserRouter>
 );

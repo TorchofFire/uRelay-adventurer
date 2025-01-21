@@ -3,5 +3,12 @@
 	height: 48px;
 	flex: none;
 	background-color: var(--text);
-	border-radius: 100%;
+	border-radius: 50%;
+	cursor: pointer;
+	transition-duration: 0.3s;
+	transition-timing-function: ease-in-out;
+}
+
+.nav-icon:hover {
+	border-radius: 35%;
 }
