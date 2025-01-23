@@ -9,7 +9,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func handshake(conn *websocket.Conn, serverAddress string) error {
+func Handshake(conn *websocket.Conn, serverAddress string) error {
 	proof, err := signMessage(profile.Profile.PrivateKey, serverAddress)
 	if err != nil {
 		return err

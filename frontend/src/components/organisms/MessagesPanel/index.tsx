@@ -4,13 +4,47 @@ import FullMessage from "../../molecules/FullMessage";
 import "./index.css";
 import React from "react";
 import * as backend from "../../../../wailsjs/go/main/App";
+import { useParams } from "react-router-dom";
+import { backendData } from "../../../types/backendData.namespace";
+import { EventsOn } from "../../../../wailsjs/runtime/runtime";
 
 const MessagesPanel = () => {
+	// TODO: figure in DMs
 	const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
 
+	const { serverAddress, channelId } = useParams();
+
+	const [messages, setMessages] = React.useState<backendData.GuildMessage[]>(
+		[]
+	);
+
+	React.useEffect(() => {
+		const handleGuildMessage = (data: backendData.GuildMessage) => {
+			// Add the new message to the state
+			setMessages((prevMessages) => [
+				...prevMessages,
+				{
+					channel_id: data.channel_id,
+					guild_id: data.guild_id,
+					id: data.id,
+					message: data.message,
+					sender_id: data.sender_id,
+					sender_name: data.sender_name,
+					sent_at: data.sent_at,
+				},
+			]);
+		};
+
+		EventsOn("guild_message", handleGuildMessage);
+	}, []);
+
 	const handleMessagesSend = () => {
-		if (!textareaRef.current) return;
-		backend.SendMessage("localhost:8080", textareaRef.current.value, 1);
+		if (!textareaRef.current || !serverAddress || !channelId) return;
+		backend
+			.SendMessage(serverAddress, textareaRef.current.value, Number(channelId))
+			.catch((error) => {
+				console.error(error);
+			});
 		textareaRef.current.value = "";
 		textareaRef.current.style.height = "auto";
 	};
@@ -24,11 +58,14 @@ const MessagesPanel = () => {
 				</div>
 			</div>
 			<div className="messages-container custom-scrollbar">
-				<FullMessage
-					username="Torch"
-					date={moment().unix()}
-					message="hello there"
-				/>
+				{[...messages].reverse().map((msg, index) => (
+					<FullMessage
+						key={index}
+						username={msg.sender_name}
+						date={msg.sent_at}
+						message={msg.message}
+					/>
+				))}
 			</div>
 			<div className="input">
 				<AutoResizingTextarea

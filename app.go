@@ -23,7 +23,7 @@ func NewApp() *App {
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 	profile.Init()
-	go connections.NewConnection(ctx, false, "localhost:8080")
+	connections.NewConnection(ctx, false, "localhost:8080")
 }
 
 func (a *App) SendMessage(serverId, message string, channelId int) error {
