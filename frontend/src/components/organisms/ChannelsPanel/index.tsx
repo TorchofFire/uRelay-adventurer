@@ -13,7 +13,7 @@ const ChannelsPanel = () => {
 				<PanelTitle>Server Name</PanelTitle>
 				<SidebarCollapseIcon />
 			</div>
-			<GuildCategory categoryName={"placeholder"}>
+			<GuildCategory>
 				<div className="channels-wrapper">
 					<div
 						className="channel"
