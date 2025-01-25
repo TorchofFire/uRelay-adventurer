@@ -40,8 +40,11 @@ func NewConnection(ctx context.Context, secure bool, serverAddress string) {
 		conn.Close()
 	}
 
+	ServersMu.Lock()
+	Servers[serverAddress].Secure = secure
+	ServersMu.Unlock()
 	updateUsers(secure, serverAddress)
-	updateChannels(secure, serverAddress)
+	updateChannelsAndCategories(secure, serverAddress)
 
 	for {
 		messageType, packet, err := conn.ReadMessage()
@@ -60,24 +63,9 @@ func NewConnection(ctx context.Context, secure bool, serverAddress string) {
 		}
 		switch p := deserializedPacket.(type) {
 		case packets.GuildMessage:
-			ServersMu.Lock()
-			pk := Servers[serverAddress].Users[p.SenderId].PublicKey
-			name := Servers[serverAddress].Users[p.SenderId].Name
-			ServersMu.Unlock()
-			plainMsg, time, err := unlockSignedMessage(pk, p.Message)
+			dataToEmit, err := turnMsgPacketToEmit(p, serverAddress)
 			if err != nil {
 				return // TODO: handle error
-			}
-			// TODO: add the raw packet to the messages map
-
-			dataToEmit := types.GuildMessageEmission{
-				GuildID:    serverAddress,
-				ID:         p.Id,
-				ChannelID:  p.ChannelId,
-				SenderID:   p.SenderId,
-				SenderName: name,
-				Message:    plainMsg,
-				SentAt:     uint32(time.Unix()),
 			}
 			emitters.EmitGuildMessage(ctx, dataToEmit)
 		case packets.Handshake:

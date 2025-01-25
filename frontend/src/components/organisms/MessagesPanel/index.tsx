@@ -19,6 +19,19 @@ const MessagesPanel = () => {
 	);
 
 	React.useEffect(() => {
+		if (!serverAddress || !channelId) return;
+
+		const fetchMessages = async () => {
+			const fetchedMessages = await backend.GetMessages(
+				serverAddress || "",
+				Number(channelId),
+				0
+			);
+			setMessages(fetchedMessages);
+		};
+
+		fetchMessages();
+
 		const handleGuildMessage = (data: backendData.GuildMessage) => {
 			// Add the new message to the state
 			setMessages((prevMessages) => [
@@ -58,14 +71,16 @@ const MessagesPanel = () => {
 				</div>
 			</div>
 			<div className="messages-container custom-scrollbar">
-				{[...messages].reverse().map((msg, index) => (
-					<FullMessage
-						key={index}
-						username={msg.sender_name}
-						date={msg.sent_at}
-						message={msg.message}
-					/>
-				))}
+				{[...messages]
+					.sort((a, b) => b.sent_at - a.sent_at)
+					.map((msg, index) => (
+						<FullMessage
+							key={index}
+							username={msg.sender_name}
+							date={msg.sent_at}
+							message={msg.message}
+						/>
+					))}
 			</div>
 			<div className="input">
 				<AutoResizingTextarea

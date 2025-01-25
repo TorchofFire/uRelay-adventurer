@@ -7,7 +7,9 @@ import (
 	"net/http"
 
 	"github.com/TorchofFire/uRelay-adventurer/internal/models"
+	"github.com/TorchofFire/uRelay-adventurer/internal/packets"
 	"github.com/TorchofFire/uRelay-adventurer/internal/profile"
+	"github.com/TorchofFire/uRelay-adventurer/internal/types"
 )
 
 type userGotten struct {
@@ -72,14 +74,19 @@ func updateUsers(secure bool, serverAddress string) error {
 	return nil
 }
 
-func updateChannels(secure bool, serverAddress string) error {
+type channelsAndCategories struct {
+	Channels   []models.GuildChannels   `json:"channels"`
+	Categories []models.GuildCategories `json:"categories"`
+}
+
+func updateChannelsAndCategories(secure bool, serverAddress string) error {
 	body, err := httpGetRequest(secure, serverAddress, "channels")
 	if err != nil {
 		return fmt.Errorf("%v", err)
 	}
 
-	var channels []models.GuildChannels
-	err = json.Unmarshal(body, &channels)
+	var channelsAndCategories channelsAndCategories
+	err = json.Unmarshal(body, &channelsAndCategories)
 	if err != nil {
 		return fmt.Errorf("failed to parse http response body to JSON: %v", err)
 	}
@@ -87,11 +94,54 @@ func updateChannels(secure bool, serverAddress string) error {
 	ServersMu.Lock()
 	defer ServersMu.Unlock()
 
-	for _, channel := range channels {
+	for _, channel := range channelsAndCategories.Channels {
 		Servers[serverAddress].Channels[channel.ID] = ChannelData{
-			Channel: channel,
+			Channel:  channel,
+			Messages: make(map[uint64]types.GuildMessageEmission),
 		}
 	}
 
 	return nil
+}
+
+func GetMessagesFromTextChannel(serverAddress string, channelId, msgId uint64) ([]types.GuildMessageEmission, error) {
+	ServersMu.Lock()
+	secure := Servers[serverAddress].Secure
+	ServersMu.Unlock()
+
+	route := fmt.Sprintf("text-channel/%d", channelId)
+	if msgId != 0 {
+		route = fmt.Sprintf("%s?msg=%d", route, msgId)
+	}
+
+	body, err := httpGetRequest(secure, serverAddress, route)
+	if err != nil {
+		return nil, fmt.Errorf("%v", err)
+	}
+
+	var messages []models.GuildMessages
+	err = json.Unmarshal(body, &messages)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse http response body to JSON: %v", err)
+	}
+
+	var dataToEmit []types.GuildMessageEmission
+
+	for _, message := range messages {
+		pMessage := packets.GuildMessage{
+			ChannelId: message.ChannelID,
+			SenderId:  message.SenderID,
+			Message:   message.Message,
+			Id:        message.ID,
+		}
+		msg, err := turnMsgPacketToEmit(pMessage, serverAddress)
+		if err != nil {
+			continue
+		}
+		dataToEmit = append(dataToEmit, msg)
+	}
+	if len(dataToEmit) == 0 {
+		dataToEmit = []types.GuildMessageEmission{}
+	}
+	return dataToEmit, nil
 }

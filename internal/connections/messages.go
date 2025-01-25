@@ -59,3 +59,30 @@ func SendMessage(conn *websocket.Conn, message string, userId, channelId uint64)
 	}
 	return nil
 }
+
+func turnMsgPacketToEmit(p packets.GuildMessage, serverAddress string) (types.GuildMessageEmission, error) {
+	ServersMu.Lock()
+	pk := Servers[serverAddress].Users[p.SenderId].PublicKey
+	name := Servers[serverAddress].Users[p.SenderId].Name
+	ServersMu.Unlock()
+	plainMsg, time, err := unlockSignedMessage(pk, p.Message)
+	if err != nil {
+		return types.GuildMessageEmission{}, err
+	}
+
+	dataToEmit := types.GuildMessageEmission{
+		GuildID:    serverAddress,
+		ID:         p.Id,
+		ChannelID:  p.ChannelId,
+		SenderID:   p.SenderId,
+		SenderName: name,
+		Message:    plainMsg,
+		SentAt:     uint32(time.Unix()),
+	}
+
+	ServersMu.Lock()
+	defer ServersMu.Unlock()
+	Servers[serverAddress].Channels[dataToEmit.ChannelID].Messages[dataToEmit.ID] = dataToEmit
+
+	return dataToEmit, nil
+}

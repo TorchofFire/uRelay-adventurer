@@ -6,6 +6,7 @@ import (
 
 	"github.com/TorchofFire/uRelay-adventurer/internal/connections"
 	"github.com/TorchofFire/uRelay-adventurer/internal/profile"
+	"github.com/TorchofFire/uRelay-adventurer/internal/types"
 )
 
 // App struct
@@ -38,4 +39,8 @@ func (a *App) SendMessage(serverId, message string, channelId uint64) error {
 		return fmt.Errorf("failed to send message: %v", err)
 	}
 	return nil
+}
+
+func (a *App) GetMessages(serverId string, channelId, msgId uint64) ([]types.GuildMessageEmission, error) {
+	return connections.GetMessagesFromTextChannel(serverId, channelId, msgId)
 }
