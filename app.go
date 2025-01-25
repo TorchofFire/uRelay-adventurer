@@ -26,7 +26,7 @@ func (a *App) startup(ctx context.Context) {
 	go connections.NewConnection(ctx, false, "localhost:8080")
 }
 
-func (a *App) SendMessage(serverId, message string, channelId int) error {
+func (a *App) SendMessage(serverId, message string, channelId uint64) error {
 	server, exists := connections.Servers[serverId]
 	if !exists {
 		return fmt.Errorf("connection not found for server id: %s", serverId)

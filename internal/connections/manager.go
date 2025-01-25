@@ -14,9 +14,9 @@ type ChannelData struct {
 
 type ServerData struct {
 	Conn       *websocket.Conn
-	PersonalID *int
-	Channels   map[int]ChannelData
-	Users      map[int]models.Users
+	PersonalID *uint64
+	Channels   map[uint64]ChannelData
+	Users      map[uint64]models.Users
 }
 
 var (
@@ -29,8 +29,8 @@ func addNewConnection(serverId string, conn *websocket.Conn) {
 	defer ServersMu.Unlock()
 	Servers[serverId] = &ServerData{
 		Conn:     conn,
-		Channels: make(map[int]ChannelData),
-		Users:    make(map[int]models.Users),
+		Channels: make(map[uint64]ChannelData),
+		Users:    make(map[uint64]models.Users),
 	}
 }
 

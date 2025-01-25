@@ -11,7 +11,7 @@ import (
 )
 
 type userGotten struct {
-	ID        int    `json:"id"`
+	ID        uint64 `json:"id"`
 	PublicKey string `json:"public_key"`
 	Name      string `json:"name"`
 }
@@ -50,7 +50,7 @@ func updateUsers(secure bool, serverAddress string) error {
 	ServersMu.Lock()
 	defer ServersMu.Unlock()
 
-	var personalID *int
+	var personalID *uint64
 	for _, user := range users {
 		Servers[serverAddress].Users[user.ID] = models.Users{
 			ID:        user.ID,

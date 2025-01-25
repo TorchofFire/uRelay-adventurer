@@ -77,7 +77,7 @@ func NewConnection(ctx context.Context, secure bool, serverAddress string) {
 				SenderID:   p.SenderId,
 				SenderName: name,
 				Message:    plainMsg,
-				SentAt:     int(time.Unix()),
+				SentAt:     uint32(time.Unix()),
 			}
 			emitters.EmitGuildMessage(ctx, dataToEmit)
 		case packets.Handshake:

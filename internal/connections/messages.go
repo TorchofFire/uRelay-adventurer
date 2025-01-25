@@ -34,7 +34,7 @@ func Handshake(conn *websocket.Conn, serverAddress string) error {
 	return nil
 }
 
-func SendMessage(conn *websocket.Conn, message string, userId, channelId int) error {
+func SendMessage(conn *websocket.Conn, message string, userId, channelId uint64) error {
 	msg, err := signMessage(profile.Profile.PrivateKey, message)
 	if err != nil {
 		return err
