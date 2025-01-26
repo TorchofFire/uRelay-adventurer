@@ -3,6 +3,10 @@ package main
 import (
 	"embed"
 
+	"github.com/TorchofFire/uRelay-adventurer/internal/connections"
+	"github.com/TorchofFire/uRelay-adventurer/internal/emitters"
+	"github.com/TorchofFire/uRelay-adventurer/internal/packets"
+	"github.com/TorchofFire/uRelay-adventurer/internal/profile"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
@@ -13,7 +17,12 @@ var assets embed.FS
 
 func main() {
 	// Create an instance of the app structure
-	app := NewApp()
+	profileService := profile.NewService()
+	profileService.Init()
+	emittersService := emitters.NewService()
+	packetsService := packets.NewService()
+	connectionsService := connections.NewService(profileService, emittersService, packetsService)
+	app := NewApp(connectionsService)
 
 	// Create application with options
 	err := wails.Run(&options.App{

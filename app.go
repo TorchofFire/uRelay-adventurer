@@ -5,9 +5,6 @@ import (
 	"fmt"
 
 	"github.com/TorchofFire/uRelay-adventurer/internal/connections"
-	"github.com/TorchofFire/uRelay-adventurer/internal/emitters"
-	"github.com/TorchofFire/uRelay-adventurer/internal/packets"
-	"github.com/TorchofFire/uRelay-adventurer/internal/profile"
 	"github.com/TorchofFire/uRelay-adventurer/internal/types"
 )
 
@@ -18,19 +15,15 @@ type App struct {
 }
 
 // NewApp creates a new App application struct
-func NewApp() *App {
-	return &App{}
+func NewApp(connections *connections.Service) *App {
+	a := &App{connections: connections}
+	return a
 }
 
 // startup is called when the app starts. The context is saved
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
-	profileService := profile.NewService()
-	profileService.Init()
-	emittersService := emitters.NewService()
-	packetsService := packets.NewService()
-	a.connections = connections.NewService(profileService, emittersService, packetsService)
 	go a.connections.NewConnection(ctx, false, "localhost:8080")
 }
 
