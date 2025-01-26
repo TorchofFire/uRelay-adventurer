@@ -7,10 +7,18 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-func EmitGuildMessage(ctx context.Context, data types.GuildMessageEmission) {
+type Service struct {
+}
+
+func NewService() *Service {
+	s := &Service{}
+	return s
+}
+
+func (s *Service) EmitGuildMessage(ctx context.Context, data types.GuildMessageEmission) {
 	runtime.EventsEmit(ctx, "guild_message", data)
 }
 
-func EmitSystemMessage(ctx context.Context, data types.SystemMessageEmission) {
+func (s *Service) EmitSystemMessage(ctx context.Context, data types.SystemMessageEmission) {
 	runtime.EventsEmit(ctx, "system_message", data)
 }

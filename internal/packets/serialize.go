@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func DeserializePacket(data []byte) (interface{}, error) {
+func (s *Service) DeserializePacket(data []byte) (interface{}, error) {
 	var base BasePacket
 	if err := json.Unmarshal(data, &base); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal base packet: %w", err)

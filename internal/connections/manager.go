@@ -1,7 +1,7 @@
 package connections
 
 import (
-	"sync"
+	"fmt"
 
 	"github.com/TorchofFire/uRelay-adventurer/internal/models"
 	"github.com/TorchofFire/uRelay-adventurer/internal/types"
@@ -21,23 +21,28 @@ type ServerData struct {
 	Users      map[uint64]models.Users
 }
 
-var (
-	Servers   = make(map[string]*ServerData)
-	ServersMu sync.Mutex
-)
-
-func addNewConnection(serverId string, conn *websocket.Conn) {
-	ServersMu.Lock()
-	defer ServersMu.Unlock()
-	Servers[serverId] = &ServerData{
+func (s *Service) addNewConnection(serverId string, conn *websocket.Conn) {
+	s.serversMu.Lock()
+	defer s.serversMu.Unlock()
+	s.servers[serverId] = &ServerData{
 		Conn:     conn,
 		Channels: make(map[uint64]ChannelData),
 		Users:    make(map[uint64]models.Users),
 	}
 }
 
-func removeConnection(serverId string) {
-	ServersMu.Lock()
-	defer ServersMu.Unlock()
-	delete(Servers, serverId)
+func (s *Service) removeConnection(serverId string) {
+	s.serversMu.Lock()
+	defer s.serversMu.Unlock()
+	delete(s.servers, serverId)
+}
+
+func (s *Service) GetServer(serverId string) (*ServerData, error) {
+	s.serversMu.Lock()
+	defer s.serversMu.Unlock()
+	server, exists := s.servers[serverId]
+	if !exists {
+		return nil, fmt.Errorf("server not found for server id: %s", serverId)
+	}
+	return server, nil
 }

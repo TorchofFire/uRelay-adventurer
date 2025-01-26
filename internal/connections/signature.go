@@ -11,7 +11,7 @@ import (
 	"golang.org/x/crypto/nacl/sign"
 )
 
-func unlockSignedMessage(publicKey, encryptedMessage string) (string, time.Time, error) {
+func (s *Service) unlockSignedMessage(publicKey, encryptedMessage string) (string, time.Time, error) {
 	pubKey, err := base64.StdEncoding.DecodeString(publicKey)
 	if err != nil {
 		return "", time.Time{}, fmt.Errorf("failed to decode publicKey: %w", err)
@@ -43,7 +43,7 @@ func unlockSignedMessage(publicKey, encryptedMessage string) (string, time.Time,
 	return payload, messageTime, nil
 }
 
-func signMessage(privateKey, message string) (string, error) {
+func (s *Service) signMessage(privateKey, message string) (string, error) {
 	privKey, err := base64.StdEncoding.DecodeString(privateKey)
 	if err != nil {
 		return "", fmt.Errorf("failed to decode privateKey: %w", err)
