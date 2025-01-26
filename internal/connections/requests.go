@@ -8,7 +8,6 @@ import (
 
 	"github.com/TorchofFire/uRelay-adventurer/internal/models"
 	"github.com/TorchofFire/uRelay-adventurer/internal/packets"
-	"github.com/TorchofFire/uRelay-adventurer/internal/profile"
 	"github.com/TorchofFire/uRelay-adventurer/internal/types"
 )
 
@@ -18,7 +17,7 @@ type userGotten struct {
 	Name      string `json:"name"`
 }
 
-func httpGetRequest(secure bool, serverAddress, route string) ([]byte, error) {
+func (s *Service) httpGetRequest(secure bool, serverAddress, route string) ([]byte, error) {
 	httProtocol := "http"
 	if secure {
 		httProtocol = "https"
@@ -37,8 +36,8 @@ func httpGetRequest(secure bool, serverAddress, route string) ([]byte, error) {
 	return body, nil
 }
 
-func updateUsers(secure bool, serverAddress string) error {
-	body, err := httpGetRequest(secure, serverAddress, "users")
+func (s *Service) updateUsers(secure bool, serverAddress string) error {
+	body, err := s.httpGetRequest(secure, serverAddress, "users")
 	if err != nil {
 		return fmt.Errorf("%v", err)
 	}
@@ -49,23 +48,23 @@ func updateUsers(secure bool, serverAddress string) error {
 		return fmt.Errorf("failed to parse http response body to JSON: %v", err)
 	}
 
-	ServersMu.Lock()
-	defer ServersMu.Unlock()
+	s.serversMu.Lock()
+	defer s.serversMu.Unlock()
 
 	var personalID *uint64
 	for _, user := range users {
-		Servers[serverAddress].Users[user.ID] = models.Users{
+		s.servers[serverAddress].Users[user.ID] = models.Users{
 			ID:        user.ID,
 			PublicKey: user.PublicKey,
 			Name:      user.Name,
 		}
 
-		if user.PublicKey == profile.Profile.PublicKey {
+		if user.PublicKey == s.profile.Profile.PublicKey {
 			personalID = &user.ID
 		}
 	}
 
-	Servers[serverAddress].PersonalID = personalID
+	s.servers[serverAddress].PersonalID = personalID
 
 	if personalID == nil {
 		return fmt.Errorf("could not find self in fetched users")
@@ -79,8 +78,8 @@ type channelsAndCategories struct {
 	Categories []models.GuildCategories `json:"categories"`
 }
 
-func updateChannelsAndCategories(secure bool, serverAddress string) error {
-	body, err := httpGetRequest(secure, serverAddress, "channels")
+func (s *Service) updateChannelsAndCategories(secure bool, serverAddress string) error {
+	body, err := s.httpGetRequest(secure, serverAddress, "channels")
 	if err != nil {
 		return fmt.Errorf("%v", err)
 	}
@@ -91,11 +90,11 @@ func updateChannelsAndCategories(secure bool, serverAddress string) error {
 		return fmt.Errorf("failed to parse http response body to JSON: %v", err)
 	}
 
-	ServersMu.Lock()
-	defer ServersMu.Unlock()
+	s.serversMu.Lock()
+	defer s.serversMu.Unlock()
 
 	for _, channel := range channelsAndCategories.Channels {
-		Servers[serverAddress].Channels[channel.ID] = ChannelData{
+		s.servers[serverAddress].Channels[channel.ID] = ChannelData{
 			Channel:  channel,
 			Messages: make(map[uint64]types.GuildMessageEmission),
 		}
@@ -104,17 +103,17 @@ func updateChannelsAndCategories(secure bool, serverAddress string) error {
 	return nil
 }
 
-func GetMessagesFromTextChannel(serverAddress string, channelId, msgId uint64) ([]types.GuildMessageEmission, error) {
-	ServersMu.Lock()
-	secure := Servers[serverAddress].Secure
-	ServersMu.Unlock()
+func (s *Service) GetMessagesFromTextChannel(serverAddress string, channelId, msgId uint64) ([]types.GuildMessageEmission, error) {
+	s.serversMu.Lock()
+	secure := s.servers[serverAddress].Secure
+	s.serversMu.Unlock()
 
 	route := fmt.Sprintf("text-channel/%d", channelId)
 	if msgId != 0 {
 		route = fmt.Sprintf("%s?msg=%d", route, msgId)
 	}
 
-	body, err := httpGetRequest(secure, serverAddress, route)
+	body, err := s.httpGetRequest(secure, serverAddress, route)
 	if err != nil {
 		return nil, fmt.Errorf("%v", err)
 	}
@@ -134,7 +133,7 @@ func GetMessagesFromTextChannel(serverAddress string, channelId, msgId uint64) (
 			Message:   message.Message,
 			Id:        message.ID,
 		}
-		msg, err := turnMsgPacketToEmit(pMessage, serverAddress)
+		msg, err := s.turnMsgPacketToEmit(pMessage, serverAddress)
 		if err != nil {
 			continue
 		}

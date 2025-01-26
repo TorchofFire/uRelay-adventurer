@@ -5,13 +5,16 @@ import (
 	"fmt"
 
 	"github.com/TorchofFire/uRelay-adventurer/internal/connections"
+	"github.com/TorchofFire/uRelay-adventurer/internal/emitters"
+	"github.com/TorchofFire/uRelay-adventurer/internal/packets"
 	"github.com/TorchofFire/uRelay-adventurer/internal/profile"
 	"github.com/TorchofFire/uRelay-adventurer/internal/types"
 )
 
 // App struct
 type App struct {
-	ctx context.Context
+	ctx         context.Context
+	connections *connections.Service
 }
 
 // NewApp creates a new App application struct
@@ -23,17 +26,22 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
-	profile.Init()
-	go connections.NewConnection(ctx, false, "localhost:8080")
+	profileService := profile.NewService()
+	profileService.Init()
+	emittersService := emitters.NewService()
+	packetsService := packets.NewService()
+	a.connections = connections.NewService(profileService, emittersService, packetsService)
+	go a.connections.NewConnection(ctx, false, "localhost:8080")
 }
 
 func (a *App) SendMessage(serverId, message string, channelId uint64) error {
-	server, exists := connections.Servers[serverId]
-	if !exists {
-		return fmt.Errorf("connection not found for server id: %s", serverId)
+
+	server, err := a.connections.GetServer(serverId)
+	if err != nil {
+		fmt.Printf("%v", err)
 	}
 
-	err := connections.SendMessage(server.Conn, message, *connections.Servers[serverId].PersonalID, channelId)
+	err = a.connections.SendMessage(server.Conn, message, *server.PersonalID, channelId)
 
 	if err != nil {
 		return fmt.Errorf("failed to send message: %v", err)
@@ -42,5 +50,5 @@ func (a *App) SendMessage(serverId, message string, channelId uint64) error {
 }
 
 func (a *App) GetMessages(serverId string, channelId, msgId uint64) ([]types.GuildMessageEmission, error) {
-	return connections.GetMessagesFromTextChannel(serverId, channelId, msgId)
+	return a.connections.GetMessagesFromTextChannel(serverId, channelId, msgId)
 }
