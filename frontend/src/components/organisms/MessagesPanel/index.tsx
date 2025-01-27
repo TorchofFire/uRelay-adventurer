@@ -6,50 +6,67 @@ import React from "react";
 import * as backend from "../../../../wailsjs/go/main/App";
 import { useParams } from "react-router-dom";
 import { backendData } from "../../../types/backendData.namespace";
-import { EventsOn } from "../../../../wailsjs/runtime/runtime";
+import { EventsOff, EventsOn } from "../../../../wailsjs/runtime/runtime";
+import LoadingWheel from "../../atoms/LoadingWheel";
 
 const MessagesPanel = () => {
 	// TODO: figure in DMs
 	const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
+	const loadingWheelRef = React.useRef<HTMLDivElement | null>(null);
 
 	const { serverAddress, channelId } = useParams();
 
 	const [messages, setMessages] = React.useState<backendData.GuildMessage[]>(
 		[]
 	);
+	const [loadingWheel, setLoadingWheel] = React.useState(true);
 
 	React.useEffect(() => {
 		if (!serverAddress || !channelId) return;
 
 		const fetchMessages = async () => {
+			const lastMessageId =
+				messages.length > 0
+					? [...messages].sort((a, b) => a.id - b.id)[0]?.id
+					: 0;
 			const fetchedMessages = await backend.GetMessages(
-				serverAddress || "",
+				serverAddress,
 				Number(channelId),
-				0
+				lastMessageId
 			);
-			setMessages(fetchedMessages);
+			setMessages((prevMessages) => {
+				return [...prevMessages, ...fetchedMessages];
+			});
+			if (fetchedMessages.length === 0) {
+				setLoadingWheel(false);
+			}
 		};
-
-		fetchMessages();
 
 		const handleGuildMessage = (data: backendData.GuildMessage) => {
-			// Add the new message to the state
-			setMessages((prevMessages) => [
-				...prevMessages,
-				{
-					channel_id: data.channel_id,
-					guild_id: data.guild_id,
-					id: data.id,
-					message: data.message,
-					sender_id: data.sender_id,
-					sender_name: data.sender_name,
-					sent_at: data.sent_at,
-				},
-			]);
+			setMessages((prevMessages) => [...prevMessages, data]);
 		};
 
+		const observer = new IntersectionObserver(
+			(entries) => {
+				const loadingWheelEntry = entries[0];
+				if (loadingWheelEntry?.isIntersecting) {
+					fetchMessages();
+				}
+			},
+			{ root: null, threshold: 1.0 }
+		);
+
+		if (loadingWheelRef.current) {
+			observer.observe(loadingWheelRef.current);
+		}
+
 		EventsOn("guild_message", handleGuildMessage);
-	}, []);
+
+		return () => {
+			observer.disconnect();
+			EventsOff("guild_message");
+		};
+	}, [messages]);
 
 	const handleMessagesSend = () => {
 		if (!textareaRef.current || !serverAddress || !channelId) return;
@@ -81,6 +98,20 @@ const MessagesPanel = () => {
 							message={msg.message}
 						/>
 					))}
+				{loadingWheel && (
+					<div ref={loadingWheelRef}>
+						<LoadingWheel />
+					</div>
+				)}
+				{!loadingWheel && (
+					<div className="empty-at-top">
+						{messages.length > 100
+							? "Wow, you've reached the top"
+							: messages.length > 0
+							? "This is the beginning of the conversation"
+							: "Be the first to send a message!"}
+					</div>
+				)}
 			</div>
 			<div className="input">
 				<AutoResizingTextarea

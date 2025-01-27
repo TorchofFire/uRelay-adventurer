@@ -72,3 +72,9 @@
 	mask-position: center;
 	cursor: pointer;
 }
+
+.empty-at-top {
+	margin: 100px 0;
+	text-align: center;
+	color: var(--highlight);
+}

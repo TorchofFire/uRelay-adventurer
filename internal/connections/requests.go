@@ -105,12 +105,38 @@ func (s *Service) updateChannelsAndCategories(secure bool, serverAddress string)
 
 func (s *Service) GetMessagesFromTextChannel(serverAddress string, channelId, msgId uint64) ([]types.GuildMessageEmission, error) {
 	s.serversMu.Lock()
-	secure := s.servers[serverAddress].Secure
+	server, serverExists := s.servers[serverAddress]
+	if !serverExists {
+		s.serversMu.Unlock()
+		return nil, fmt.Errorf("server connection not found")
+	}
+	secure := server.Secure
+
+	cachedMsgs := server.Channels[channelId].Messages
+
 	s.serversMu.Unlock()
+	if len(cachedMsgs) > 0 && func() bool {
+		var lowestId uint64 = ^uint64(0)
+		for id := range cachedMsgs {
+			if lowestId == 0 || id < lowestId {
+				lowestId = id
+			}
+		}
+		return msgId != lowestId
+	}() {
+		msgsSlice := make([]types.GuildMessageEmission, 0, len(cachedMsgs))
+		for _, msg := range cachedMsgs {
+			msgsSlice = append(msgsSlice, msg)
+		}
+		return msgsSlice, nil
+	}
 
 	route := fmt.Sprintf("text-channel/%d", channelId)
 	if msgId != 0 {
-		route = fmt.Sprintf("%s?msg=%d", route, msgId)
+		if msgId == 1 {
+			return []types.GuildMessageEmission{}, nil
+		}
+		route = fmt.Sprintf("%s?msg=%d", route, msgId-1)
 	}
 
 	body, err := s.httpGetRequest(secure, serverAddress, route)
