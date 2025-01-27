@@ -24,6 +24,8 @@ const MessagesPanel = () => {
 	React.useEffect(() => {
 		if (!serverAddress || !channelId) return;
 
+		textareaRef.current?.focus();
+
 		const fetchMessages = async () => {
 			const lastMessageId =
 				messages.length > 0

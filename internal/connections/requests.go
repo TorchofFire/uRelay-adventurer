@@ -15,7 +15,17 @@ type userGotten struct {
 	ID        uint64 `json:"id"`
 	PublicKey string `json:"public_key"`
 	Name      string `json:"name"`
+	Status    status `json:"status"`
 }
+
+type status string
+
+const (
+	Online status = "online"
+	// Idle    status = "idle"
+	// DnD     status = "dnd"
+	Offline status = "offline"
+)
 
 func (s *Service) httpGetRequest(secure bool, serverAddress, route string) ([]byte, error) {
 	httProtocol := "http"
