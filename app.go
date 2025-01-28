@@ -45,3 +45,7 @@ func (a *App) SendMessage(serverId, message string, channelId uint64) error {
 func (a *App) GetMessages(serverId string, channelId, msgId uint64) ([]types.GuildMessageEmission, error) {
 	return a.connections.GetMessagesFromTextChannel(serverId, channelId, msgId)
 }
+
+func (a *App) GetUsers(serverId string) ([]types.Users, error) {
+	return a.connections.GetUsersSliceFromServer(serverId)
+}

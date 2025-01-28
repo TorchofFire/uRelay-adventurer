@@ -5,9 +5,9 @@ import "./index.css";
 import React from "react";
 import * as backend from "../../../../wailsjs/go/main/App";
 import { useParams } from "react-router-dom";
-import { backendData } from "../../../types/backendData.namespace";
 import { EventsOff, EventsOn } from "../../../../wailsjs/runtime/runtime";
 import LoadingWheel from "../../atoms/LoadingWheel";
+import { types } from "../../../../wailsjs/go/models";
 
 const MessagesPanel = () => {
 	// TODO: figure in DMs
@@ -16,7 +16,7 @@ const MessagesPanel = () => {
 
 	const { serverAddress, channelId } = useParams();
 
-	const [messages, setMessages] = React.useState<backendData.GuildMessage[]>(
+	const [messages, setMessages] = React.useState<types.GuildMessageEmission[]>(
 		[]
 	);
 	const [loadingWheel, setLoadingWheel] = React.useState(true);
@@ -44,7 +44,7 @@ const MessagesPanel = () => {
 			}
 		};
 
-		const handleGuildMessage = (data: backendData.GuildMessage) => {
+		const handleGuildMessage = (data: types.GuildMessageEmission) => {
 			setMessages((prevMessages) => [...prevMessages, data]);
 		};
 

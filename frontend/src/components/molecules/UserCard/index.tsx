@@ -1,10 +1,9 @@
-import { UserStatus } from "../../../types/userStatus.type";
 import "./index.css";
 
 interface Props {
 	name: string;
 	pfp?: string;
-	status?: UserStatus;
+	status?: string;
 }
 
 const UserCard = (props: Props) => {

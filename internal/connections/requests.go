@@ -159,3 +159,14 @@ func (s *Service) GetMessagesFromTextChannel(serverAddress string, channelId, ms
 	}
 	return dataToEmit, nil
 }
+
+func (s *Service) GetUsersSliceFromServer(serverAddress string) ([]types.Users, error) {
+	s.serversMu.Lock()
+	defer s.serversMu.Unlock()
+	users := s.servers[serverAddress].Users
+	usersSlice := make([]types.Users, 0, len(users))
+	for _, msg := range users {
+		usersSlice = append(usersSlice, msg)
+	}
+	return usersSlice, nil
+}
