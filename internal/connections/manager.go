@@ -3,13 +3,12 @@ package connections
 import (
 	"fmt"
 
-	"github.com/TorchofFire/uRelay-adventurer/internal/models"
 	"github.com/TorchofFire/uRelay-adventurer/internal/types"
 	"github.com/gorilla/websocket"
 )
 
 type ChannelData struct {
-	Channel  models.GuildChannels
+	Channel  types.GuildChannels
 	Messages map[uint64]types.GuildMessageEmission `json:"messages"`
 }
 
@@ -18,7 +17,7 @@ type ServerData struct {
 	Secure     bool
 	PersonalID *uint64
 	Channels   map[uint64]ChannelData
-	Users      map[uint64]models.Users
+	Users      map[uint64]types.Users
 }
 
 func (s *Service) addNewConnection(serverId string, conn *websocket.Conn) {
@@ -27,7 +26,7 @@ func (s *Service) addNewConnection(serverId string, conn *websocket.Conn) {
 	s.servers[serverId] = &ServerData{
 		Conn:     conn,
 		Channels: make(map[uint64]ChannelData),
-		Users:    make(map[uint64]models.Users),
+		Users:    make(map[uint64]types.Users),
 	}
 }
 

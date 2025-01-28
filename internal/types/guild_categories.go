@@ -1,4 +1,9 @@
-package models
+package types
+
+type ChannelsAndCategories struct {
+	Channels   []GuildChannels   `json:"channels"`
+	Categories []GuildCategories `json:"categories"`
+}
 
 type GuildCategories struct {
 	ID              uint64 `json:"id" db:"id"`

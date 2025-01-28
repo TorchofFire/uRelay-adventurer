@@ -1,4 +1,4 @@
-package models
+package types
 
 type GuildMessages struct {
 	ID        uint64 `json:"id" db:"id"`

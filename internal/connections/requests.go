@@ -6,25 +6,8 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/TorchofFire/uRelay-adventurer/internal/models"
 	"github.com/TorchofFire/uRelay-adventurer/internal/packets"
 	"github.com/TorchofFire/uRelay-adventurer/internal/types"
-)
-
-type userGotten struct {
-	ID        uint64 `json:"id"`
-	PublicKey string `json:"public_key"`
-	Name      string `json:"name"`
-	Status    status `json:"status"`
-}
-
-type status string
-
-const (
-	Online status = "online"
-	// Idle    status = "idle"
-	// DnD     status = "dnd"
-	Offline status = "offline"
 )
 
 func (s *Service) httpGetRequest(secure bool, serverAddress, route string) ([]byte, error) {
@@ -52,7 +35,7 @@ func (s *Service) updateUsers(secure bool, serverAddress string) error {
 		return fmt.Errorf("%v", err)
 	}
 
-	var users []userGotten
+	var users []types.Users
 	err = json.Unmarshal(body, &users)
 	if err != nil {
 		return fmt.Errorf("failed to parse http response body to JSON: %v", err)
@@ -63,10 +46,11 @@ func (s *Service) updateUsers(secure bool, serverAddress string) error {
 
 	var personalID *uint64
 	for _, user := range users {
-		s.servers[serverAddress].Users[user.ID] = models.Users{
+		s.servers[serverAddress].Users[user.ID] = types.Users{
 			ID:        user.ID,
 			PublicKey: user.PublicKey,
 			Name:      user.Name,
+			Status:    user.Status,
 		}
 
 		if user.PublicKey == s.profile.Profile.PublicKey {
@@ -83,18 +67,13 @@ func (s *Service) updateUsers(secure bool, serverAddress string) error {
 	return nil
 }
 
-type channelsAndCategories struct {
-	Channels   []models.GuildChannels   `json:"channels"`
-	Categories []models.GuildCategories `json:"categories"`
-}
-
 func (s *Service) updateChannelsAndCategories(secure bool, serverAddress string) error {
 	body, err := s.httpGetRequest(secure, serverAddress, "channels")
 	if err != nil {
 		return fmt.Errorf("%v", err)
 	}
 
-	var channelsAndCategories channelsAndCategories
+	var channelsAndCategories types.ChannelsAndCategories
 	err = json.Unmarshal(body, &channelsAndCategories)
 	if err != nil {
 		return fmt.Errorf("failed to parse http response body to JSON: %v", err)
@@ -154,7 +133,7 @@ func (s *Service) GetMessagesFromTextChannel(serverAddress string, channelId, ms
 		return nil, fmt.Errorf("%v", err)
 	}
 
-	var messages []models.GuildMessages
+	var messages []types.GuildMessages
 	err = json.Unmarshal(body, &messages)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse http response body to JSON: %v", err)

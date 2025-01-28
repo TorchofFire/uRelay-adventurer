@@ -1,5 +1,13 @@
 package types
 
+type Severity string
+
+const (
+	Info    Severity = "info"
+	Warning Severity = "warning"
+	Danger  Severity = "danger"
+)
+
 type GuildMessageEmission struct {
 	GuildID    string `json:"guild_id"`
 	ID         uint64 `json:"id"`
