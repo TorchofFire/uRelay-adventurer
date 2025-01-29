@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/TorchofFire/uRelay-adventurer/internal/connections"
+	"github.com/TorchofFire/uRelay-adventurer/internal/packets"
 	"github.com/TorchofFire/uRelay-adventurer/internal/types"
 )
 
@@ -46,6 +47,6 @@ func (a *App) GetMessages(serverId string, channelId, msgId uint64) ([]types.Gui
 	return a.connections.GetMessagesFromTextChannel(serverId, channelId, msgId)
 }
 
-func (a *App) GetUsers(serverId string) ([]types.Users, error) {
+func (a *App) GetUsers(serverId string) ([]packets.User, error) {
 	return a.connections.GetUsersSliceFromServer(serverId)
 }

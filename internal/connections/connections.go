@@ -94,6 +94,8 @@ func (s *Service) NewConnection(ctx context.Context, secure bool, serverAddress 
 				ChannelId: p.ChannelId,
 			}
 			s.emitters.EmitSystemMessage(ctx, dataToEmit)
+		case packets.User:
+			// TODO: emit
 		default:
 			log.Fatal("A deserialized and known packet was not handled")
 		}

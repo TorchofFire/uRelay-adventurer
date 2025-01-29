@@ -19,7 +19,7 @@ type BasePacket struct {
 	Data json.RawMessage  `json:"data"`
 }
 
-type Handshake struct { // type: handshake
+type Handshake struct {
 	Name      string `json:"name"`
 	PublicKey string `json:"public_key"`
 	Proof     string `json:"proof"`
@@ -31,15 +31,17 @@ type Handshake struct { // type: handshake
 	*/
 }
 
-type GuildMessage struct { // type: guild_message
+type GuildMessage struct {
 	ChannelId uint64 `json:"channel_id"`
 	SenderId  uint64 `json:"sender_id"`
 	Message   string `json:"message"`
 	Id        uint64 `json:"id"`
 }
 
-type SystemMessage struct { // type: system_message
+type SystemMessage struct {
 	Severity  types.Severity `json:"severity"`
 	Message   string         `json:"message"`
 	ChannelId uint64         `json:"channel_id"`
 }
+
+type User = types.Users
