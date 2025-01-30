@@ -6,7 +6,7 @@ const NavigationPanel = () => {
 	return (
 		<div className="navigation-panel">
 			<div className="fixed-nav">
-				<NavIcon />
+				<NavIcon to="/settings" />
 				<NavIcon />
 				<NavIcon />
 			</div>
