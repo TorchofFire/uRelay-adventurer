@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import NavIcon from "../../atoms/NavIcon";
 import "./index.css";
 
