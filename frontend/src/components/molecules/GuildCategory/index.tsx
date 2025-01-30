@@ -17,7 +17,7 @@ const GuildCategory = (props: Props) => {
 					</div>
 				</div>
 			)}
-			{props.children}
+			<div className="channels-wrapper">{props.children}</div>
 		</div>
 	);
 };

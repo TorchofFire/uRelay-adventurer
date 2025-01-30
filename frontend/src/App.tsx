@@ -8,7 +8,7 @@ function App() {
 		<>
 			<NavigationPanel />
 			<Routes>
-				<Route path="/guild/:serverAddress/*" element={<Guild />} />
+				<Route path="/guild/:serverAddress/:channelId?" element={<Guild />} />
 			</Routes>
 		</>
 	);

@@ -35,7 +35,7 @@ func (a *App) SendMessage(serverId, message string, channelId uint64) error {
 		fmt.Printf("%v", err)
 	}
 
-	err = a.connections.SendMessage(server.Conn, message, *server.PersonalID, channelId)
+	err = a.connections.SendMessage(server.Conn, message, server.PersonalID, channelId)
 
 	if err != nil {
 		return fmt.Errorf("failed to send message: %v", err)
@@ -49,4 +49,8 @@ func (a *App) GetMessages(serverId string, channelId, msgId uint64) ([]types.Gui
 
 func (a *App) GetUsers(serverId string) ([]packets.User, error) {
 	return a.connections.GetUsersSliceFromServer(serverId)
+}
+
+func (a *App) GetChannels(serverId string) (types.ChannelsAndCategories, error) {
+	return a.connections.GetChannelsAndCategories(serverId)
 }

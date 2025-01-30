@@ -44,7 +44,7 @@ func (s *Service) updateUsers(secure bool, serverAddress string) error {
 	s.serversMu.Lock()
 	defer s.serversMu.Unlock()
 
-	var personalID *uint64
+	var personalID uint64
 	for _, user := range users {
 		s.servers[serverAddress].Users[user.ID] = types.Users{
 			ID:        user.ID,
@@ -54,13 +54,13 @@ func (s *Service) updateUsers(secure bool, serverAddress string) error {
 		}
 
 		if user.PublicKey == s.profile.Profile.PublicKey {
-			personalID = &user.ID
+			personalID = user.ID
 		}
 	}
 
 	s.servers[serverAddress].PersonalID = personalID
 
-	if personalID == nil {
+	if personalID == 0 {
 		return fmt.Errorf("could not find self in fetched users")
 	}
 
@@ -87,6 +87,9 @@ func (s *Service) updateChannelsAndCategories(secure bool, serverAddress string)
 			Channel:  channel,
 			Messages: make(map[uint64]types.GuildMessageEmission),
 		}
+	}
+	for _, category := range channelsAndCategories.Categories {
+		s.servers[serverAddress].Categories[category.ID] = category
 	}
 
 	return nil
@@ -163,10 +166,47 @@ func (s *Service) GetMessagesFromTextChannel(serverAddress string, channelId, ms
 func (s *Service) GetUsersSliceFromServer(serverAddress string) ([]types.Users, error) {
 	s.serversMu.Lock()
 	defer s.serversMu.Unlock()
-	users := s.servers[serverAddress].Users
-	usersSlice := make([]types.Users, 0, len(users))
-	for _, msg := range users {
-		usersSlice = append(usersSlice, msg)
+	server, exists := s.servers[serverAddress]
+	if !exists {
+		return nil, fmt.Errorf("server not found: %s", serverAddress)
+	}
+
+	var usersSlice []types.Users
+	if server.Users != nil {
+		usersSlice = make([]types.Users, 0, len(server.Users))
+		for _, user := range server.Users {
+			usersSlice = append(usersSlice, user)
+		}
 	}
 	return usersSlice, nil
+}
+
+func (s *Service) GetChannelsAndCategories(serverAddress string) (types.ChannelsAndCategories, error) {
+	s.serversMu.Lock()
+	defer s.serversMu.Unlock()
+	server, exists := s.servers[serverAddress]
+	if !exists {
+		return types.ChannelsAndCategories{}, fmt.Errorf("server not found: %s", serverAddress)
+	}
+
+	var channelsSlice []types.GuildChannels
+	if server.Channels != nil {
+		channelsSlice = make([]types.GuildChannels, 0, len(server.Channels))
+		for _, channel := range server.Channels {
+			channelsSlice = append(channelsSlice, channel.Channel)
+		}
+	}
+
+	var categoriesSlice []types.GuildCategories
+	if server.Categories != nil {
+		categoriesSlice = make([]types.GuildCategories, 0, len(server.Categories))
+		for _, category := range server.Categories {
+			categoriesSlice = append(categoriesSlice, category)
+		}
+	}
+
+	return types.ChannelsAndCategories{
+		Channels:   channelsSlice,
+		Categories: categoriesSlice,
+	}, nil
 }

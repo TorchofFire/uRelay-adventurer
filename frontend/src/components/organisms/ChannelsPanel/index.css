@@ -37,11 +37,8 @@
 	box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
 }
 
-.channels-wrapper {
-	display: inline-flex;
-	flex-direction: column;
-	gap: 12px;
-	padding: 0px 12px;
+.channel.selected {
+	outline: 2px solid #ffffff10;
 }
 
 .channel-name {

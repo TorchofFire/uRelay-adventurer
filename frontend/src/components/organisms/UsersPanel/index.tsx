@@ -36,7 +36,13 @@ const UsersPanel = () => {
 					<div className="users-of-category-wrapper">
 						{[...users].map((user) => {
 							if (user.status === "online")
-								return <UserCard name={user.name} status={user.status} />;
+								return (
+									<UserCard
+										key={user.id}
+										name={user.name}
+										status={user.status}
+									/>
+								);
 						})}
 					</div>
 				</GuildCategory>
@@ -45,7 +51,13 @@ const UsersPanel = () => {
 						<div className="users-of-category-wrapper">
 							{[...users].map((user) => {
 								if (user.status === "offline")
-									return <UserCard name={user.name} status={user.status} />;
+									return (
+										<UserCard
+											key={user.id}
+											name={user.name}
+											status={user.status}
+										/>
+									);
 							})}
 						</div>
 					</GuildCategory>

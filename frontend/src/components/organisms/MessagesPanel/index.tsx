@@ -15,6 +15,7 @@ const MessagesPanel = () => {
 	const loadingWheelRef = React.useRef<HTMLDivElement | null>(null);
 
 	const { serverAddress, channelId } = useParams();
+	console.log(serverAddress, channelId);
 
 	const [messages, setMessages] = React.useState<types.GuildMessageEmission[]>(
 		[]
@@ -68,7 +69,7 @@ const MessagesPanel = () => {
 			observer.disconnect();
 			EventsOff("guild_message");
 		};
-	}, [messages]);
+	}, [messages, serverAddress, channelId]);
 
 	const handleMessagesSend = () => {
 		if (!textareaRef.current || !serverAddress || !channelId) return;

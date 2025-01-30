@@ -31,3 +31,10 @@
 .angle-down-icon.facing-right {
 	transform: rotate(-90deg);
 }
+
+.channels-wrapper {
+	display: inline-flex;
+	flex-direction: column;
+	gap: 12px;
+	padding: 0px 12px;
+}
