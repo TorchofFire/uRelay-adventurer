@@ -95,7 +95,13 @@ func (s *Service) NewConnection(ctx context.Context, secure bool, serverAddress 
 			}
 			s.emitters.EmitSystemMessage(ctx, dataToEmit)
 		case packets.User:
-			// TODO: emit
+			dataToEmit := types.Users{
+				ID:        p.ID,
+				PublicKey: p.PublicKey,
+				Name:      p.Name,
+				Status:    p.Status,
+			}
+			s.emitters.EmitUser(ctx, dataToEmit)
 		default:
 			log.Fatal("A deserialized and known packet was not handled")
 		}

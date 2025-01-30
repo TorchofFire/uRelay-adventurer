@@ -7,6 +7,7 @@ import "./index.css";
 import React from "react";
 import * as backend from "../../../../wailsjs/go/main/App";
 import { types } from "../../../../wailsjs/go/models";
+import { EventsOff, EventsOn } from "../../../../wailsjs/runtime/runtime";
 
 const UsersPanel = () => {
 	const { serverAddress } = useParams();
@@ -23,7 +24,26 @@ const UsersPanel = () => {
 			});
 		};
 
+		const handleUser = (data: types.Users) => {
+			setUsers((prevUsers) => {
+				if (prevUsers.some((user) => user.id === data.id)) {
+					const users = prevUsers.map((user) => {
+						if (user.id === data.id) return data;
+						return user;
+					});
+					return users;
+				}
+				return [...prevUsers, data];
+			});
+		};
+
 		fetchUsers();
+
+		EventsOn("user", handleUser);
+
+		return () => {
+			EventsOff("user");
+		};
 	}, []);
 	return (
 		<div className="users-panel">
@@ -65,7 +85,7 @@ const UsersPanel = () => {
 			</div>
 			<div className="server-profile">
 				<div className="server-profile-wrapper">
-					<UserCard name="Username (in dev)" status="online" />
+					<UserCard name="You (in dev)" status="online" />
 				</div>
 			</div>
 		</div>

@@ -19,6 +19,10 @@ func (s *Service) EmitGuildMessage(ctx context.Context, data types.GuildMessageE
 	runtime.EventsEmit(ctx, "guild_message", data)
 }
 
+func (s *Service) EmitUser(ctx context.Context, data types.Users) {
+	runtime.EventsEmit(ctx, "user", data)
+}
+
 func (s *Service) EmitSystemMessage(ctx context.Context, data types.SystemMessageEmission) {
 	runtime.EventsEmit(ctx, "system_message", data)
 }
