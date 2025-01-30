@@ -21,6 +21,24 @@ const MessagesPanel = () => {
 		[]
 	);
 	const [loadingWheel, setLoadingWheel] = React.useState(true);
+	const [channelName, setChannelName] = React.useState("");
+
+	React.useEffect(() => {
+		if (!serverAddress) return;
+
+		const fetchChannels = async () => {
+			const fetchedData = await backend.GetChannels(serverAddress);
+
+			const currentChannel = fetchedData.channels.find(
+				(channel) => channel.id.toString() === channelId
+			);
+			if (currentChannel) {
+				setChannelName(currentChannel.name);
+			}
+		};
+
+		fetchChannels();
+	}, [serverAddress, channelId]);
 
 	React.useEffect(() => {
 		if (!serverAddress || !channelId) return;
@@ -87,7 +105,7 @@ const MessagesPanel = () => {
 			<div className="messages-panel-header">
 				<div className="title-wrapper">
 					<div className="big-title-icon hashtag" />
-					<div className="channel-title-text">Channel Name</div>
+					<div className="channel-title-text">{channelName}</div>
 				</div>
 			</div>
 			<div className="messages-container custom-scrollbar">

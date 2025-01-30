@@ -1,4 +1,7 @@
 .username-title {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	color: var(--text);
 }
 
@@ -26,7 +29,8 @@
 .pfp {
 	object-fit: cover;
 	background-size: cover;
-	border-radius: 16px;
+	border-radius: 50%;
+	min-width: 32px;
 	width: 32px;
 	height: 32px;
 }

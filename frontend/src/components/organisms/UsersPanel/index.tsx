@@ -65,7 +65,7 @@ const UsersPanel = () => {
 			</div>
 			<div className="server-profile">
 				<div className="server-profile-wrapper">
-					<UserCard name="Username" status="online" />
+					<UserCard name="Username (in dev)" status="online" />
 				</div>
 			</div>
 		</div>
