@@ -7,8 +7,8 @@ const NavigationPanel = () => {
 		<div className="navigation-panel">
 			<div className="fixed-nav">
 				<NavIcon to="/settings" />
-				<NavIcon />
-				<NavIcon />
+				<NavIcon to="/direct-messages" />
+				<NavIcon to="/network" />
 			</div>
 			<div id="nav-break" />
 			<div className="server-list">

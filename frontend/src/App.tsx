@@ -12,6 +12,8 @@ function App() {
 			<Routes>
 				<Route path="/settings" element={<Profiles />} />
 				{/*TODO: Switch out profiles for settings*/}
+				<Route path="/direct-messages" element={<div>to be DMs</div>} />
+				<Route path="/network" element={<div>to be Network</div>} />
 				<Route path="/guild/:serverAddress/:channelId?" element={<Guild />} />
 			</Routes>
 		</>
